@@ -1,7 +1,9 @@
 import telebot
 import os
 
-BOT_TOKEN = os.getenv("BOT_TOKEN", "8161027017:AAEJMtVQqepwUoHsPlRYn7UAsV3wFCfj4Qc")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+if not BOT_TOKEN:
+    raise ValueError("⛔ El token del bot no está definido. Verificá la variable BOT_TOKEN en Railway.")
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
