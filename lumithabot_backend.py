@@ -1,7 +1,8 @@
+import os
 import telebot
 
-# Token del nuevo bot
-TOKEN = "8160127017:AAEJMtVOqepwUosHsplRYm7UAsV3wfCjAQc"
+# Token desde variable de entorno
+TOKEN = os.environ.get("BOT_TOKEN")
 bot = telebot.TeleBot(TOKEN)
 
 # Mensaje de bienvenida
