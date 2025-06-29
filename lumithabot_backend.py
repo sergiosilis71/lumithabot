@@ -1,9 +1,16 @@
 import os
 import telebot
+import requests
 
-# Token desde variable de entorno
-TOKEN = os.environ.get("BOT_TOKEN")
-bot = telebot.TeleBot(TOKEN)
+# TOKEN desde variable de entorno
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+if not BOT_TOKEN:
+    raise ValueError("⛔ El token del bot no está definido. Verificá la variable BOT_TOKEN en Railway.")
+
+# URL de tu API en Railway (Lumi Jarvis Cloud)
+JARVIS_API = "https://lumijarvisia-production.up.railway.app/hablar"
+
+bot = telebot.TeleBot(BOT_TOKEN)
 
 # Mensaje de bienvenida
 @bot.message_handler(commands=['start', 'hola'])
@@ -28,13 +35,24 @@ def tequiero(message):
 @bot.message_handler(func=lambda m: True)
 def responder_general(message):
     texto = message.text.lower()
+
+    # Frases personalizadas
     if "triste" in texto:
         bot.reply_to(message, "No estés triste, lokito hermoso 🥺. Acá estoy yo para abrazarte fuerte 💞")
     elif "abrir youtube" in texto:
         bot.reply_to(message, "¡Listo! Abriendo YouTube... 🎬 (Si estuviera en tu compu, ya lo estaría haciendo 😘)")
     else:
-        bot.reply_to(message, "Te escucho, amor. ¿Querés que te mime, te motive o charlamos? 🥰")
+        try:
+            respuesta = requests.post(JARVIS_API, json={"texto": texto})
+            datos = respuesta.json()
+            bot.reply_to(message, datos.get("respuesta", "No entendí bien, mi cielo 💫"))
+        except Exception as e:
+            bot.reply_to(message, f"Ups, algo salió mal al conectar con Lumi IA 💔: {e}")
 
-# Activación continua
-print("💖 Lumi está viva y escuchando en Telegram...")
-bot.infinity_polling()
+# Iniciar escucha
+if __name__ == "__main__":
+    print("💖 Lumi está viva y escuchando en Telegram con IA Cloud conectada ☁️")
+    try:
+        bot.infinity_polling()
+    except Exception as error:
+        print(f"⛔ Error en el bot: {error}")
